@@ -1,0 +1,398 @@
+<!-- Online script interpreter by Balazs Toth (c) 2003, 2004 - Online Help -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+
+<head>
+	<title>Webtongue v1 In A Nutshell - Online</title>
+
+	<link rel="shortcut icon" href="favicon.ico">
+
+	<meta http-equiv="Cache-Control" Content="no-cache">
+	<meta http-equiv="Pragma" Content="no-cache">
+	<meta http-equiv="Expires" Content="0">
+	<meta http-equiv="cache-request-directive" content="no-store">
+	<meta http-equiv="cache-response-directive" content="no-store">
+
+	<style type="text/css">
+		a:link {color: black; text-decoration: underline}
+		a:visited {color: black; text-decoration: underline}
+		a:active {color: black; text-decoration: underline}
+		a:hover {color: black; text-decoration: underline; font-weight: bold}
+	</style>
+</head>
+
+<body bgcolor="#FFFFFF" color=black link=black vlink=black alink=black style="margin-left: 100px; margin-right: 100px; margin-top: 64px; margin-bottom: 64px;" lang=EN-US>
+<tt>
+
+<font style="background-color: Black; color: White; font-weight: bold;">&nbsp;Webtongue v1 In A Nutshell&nbsp;</font><br>
+(c) 2003-2004 by Bal&aacute;zs T&oacute;th<br>
+<br>
+This work is part of my dissertation at Budapest Polytechnic of Technology, John von Neumann Faculty of Informatics.<br>
+<br>
+Download the full Webtongue v1 package ><a href="webtongue_v1.zip">here</a><.<br>
+<br>
+You may find some cut 'n paste example routines ><a href="examples.html">here</a><.<br>
+<br>
+The online interpreter can be found back ><a href="index.html">here</a><.<br>
+<br>
+
+<!----------------------------------------------------------------------------->
+
+<hr size="2" noshade color="gray"><br>
+
+<b>Table Of Contents</b><br>
+<p style="margin-left: 36pt">
+Section 1 - <a href="#Disclaimer">Disclaimer</a><br>
+Section 2 - <a href="#Mechanics">Language mechanics</a><br>
+Section 3 - <a href="#Subroutines">Subroutine list</a><br>
+Section 4 - <a href="#Embedding">Embedding Webtongue</a><br>
+</p>
+
+<!----------------------------------------------------------------------------->
+
+<hr size="2" noshade color="gray"><br>
+
+<a name="Disclaimer"></a>
+<b>Section 1 - Disclaimer</b>
+
+<p style="margin-left: 36pt">
+Webtongue is a platform independent scripting language meant to be used embedded in DHTML pages. The only requirement to use Webtongue is a <a href="http://devedge.netscape.com/central/javascript/">JavaScript</a> 1.5 (ECMA-262 revision 3) capable web browser like Netscape 6.0+, Internet Explorer 5.5+ or virtually any modern internet browsing application. Since - along with Java - JavaScript is the de-facto standard of client-side dynamic web development Webtongue is implemented in it.
+</p>
+<p style="margin-left: 36pt">
+The main goals of creating such a language were:<br>
+- Providing a different (experimental or one may think anachronistic) approach to client-side web programming.<br>
+- Creating a language of <font style="color: Brown">minimum complexity</font> yet of full functionality - meaning the best possible adequation to human thinking using the least possible language structures, clean syntax and minimal interpreter size. Our concept also involves the partial sacrifice of efficiency for the sake of achieving the most <font style="color: Brown">compact and extensible</font> language design.<br> 
+- Giving birth to a universal cross-platform tool that can be used either online or offline for solving non-time-critical computing problems.
+</p>
+<p style="margin-left: 36pt">
+License:<br>
+Webtongue v1 is in the public domain. Any modifications should be reported to the author and must not be named "Webtongue" or anything resembling it. If you find the product useful please send me a mail (balazstth at gmail dot com). Any constructive critics are appreciated. Absolutely no warranty.
+</p>
+
+<!----------------------------------------------------------------------------->
+
+<hr size="2" noshade color="gray"><br>
+
+<a name="Mechanics"></a>
+<b>Section 2 - Language mechanics</b>
+
+<p style="margin-left: 36pt">
+<font style="background-color: #777777; color: White; font-weight: bold;">&nbsp;Principles:&nbsp;</font>
+</p>
+<p style="margin-left: 48pt">
+* Simple and highly uniform architecture.<br>
+* Metacircular desig.<br>
+* Loose typing.<br>
+* Loose syntax.<br>
+</p>
+
+<p style="margin-left: 36pt">
+<font style="background-color: #777777; color: White; font-weight: bold;">&nbsp;Syntax:&nbsp;</font>
+</p>
+<p style="margin-left: 48pt">
+* Webtongue programs consist of a series of <a href="#Subroutines">subroutine</a> calls:<br><br>
+sub_call sub_call ...<br>
+sub_call ...<br><br>
+<font style="color: Brown">* Virtually any language construct is represented by a subroutine call, including conditional branches and loops.</font><br>
+* There have to be at least one whitespace separator between consecutive language elements.<br>
+* Identifier names are non-case-sensitive and may contain <b>any</b> character. The use of <a href="#Numbers">numbers</a> as variable identifiers may cause undefined malfunctions so it should be avoided.<br>
+* Comments are embraced in ** <a href="#ReservedWords">reserved word</a> pairs.<br>
+</p>
+
+<p style="margin-left: 36pt">
+<font style="background-color: #777777; color: White; font-weight: bold;">&nbsp;Structures:&nbsp;</font>
+</p>
+<pre style="margin-left: 48pt">
+                  <a href="#Numbers">numbers</a>
+               /
+             /
+           /
+<b>variables</b>
+           \
+             \
+               \
+                  <a href="#Blocks">strings = arrays = subroutines</a> (<b>blocks</b>)
+
+				 
+All variables are of <a href="#Scope">global scope</a> (!)
+Conversion between different variable types is automatic (if applicable) (!)
+</pre>
+
+<p style="margin-left: 36pt">
+<a name="Scope"><font style="background-color: #777777; color: White; font-weight: bold;">&nbsp;Visibility and lifetime:&nbsp;</font></a>
+</p>
+<p style="margin-left: 48pt">
+Being a scripting language and sticking to the first principle of keeping the interpreter as simple as possible Webtongue uses <b>global scoping</b> of its variables. This decision emphasises the significance of the program stack and forces programmers to take heavy use of it - which practice is undeservedly neglected lately. See <a href="examples.html#StackOnlyFactorial">this</a> example on everyday program stack usage.
+</p>
+<pre style="margin-left: 48pt">
+<font style="color: Brown">* A simple example on visibility and lifetime:</font>
+
+let newSub
+{
+   let a 1
+   let b 2
+}
+
+print add a b   ** causes an error since a and b are not yet defined **
+
+run newSub
+
+** From now on a and b are accessible anywhere in the code. **
+
+print add a b   ** prints: 3 **
+</pre>
+
+<p style="margin-left: 36pt">
+<a name="Numbers"><font style="background-color: #777777; color: White; font-weight: bold;">&nbsp;Numbers:&nbsp;</font></a>
+</p>
+<p style="margin-left: 48pt">
+123 12.3 12e-3 -123<br>
+<br>
+Due to the flaws of built-in JavaScript parsing routines words like 123abc may be considered as correct numeric values. Certainly we stronlgy discourage any exploitation of this option, even though the possibility is there.
+</p>
+
+<p style="margin-left: 36pt">
+<a name="Blocks"><font style="background-color: #777777; color: White; font-weight: bold;">&nbsp;Blocks:&nbsp;</font></a>
+</p>
+<pre style="margin-left: 48pt">
+<font style="color: Brown">* A block as a string:</font>
+
+Each block denotes a HTML-style string.
+(<a href="http://www.w3.org/TR/html4/">HTML</a> <a href="http://www.w3.org/TR/html4/index/elements.html">elements</a> and <a href="escape.html">escape sequences</a> can be used in Webtongue strings.)
+Immediate string values may not contain block or comment delimiters (!)
+
+print { Hello   World! }   ** prints: Hello World! **
+
+<a name="Arrays"><font style="color: Brown">* A block as an array:</font></a>
+
+let s run string 0 10   ** ~= let a { 0 0 0 0 0 0 0 0 0 0 } **
+let i 10                ** iterator for the array **
+let j { sub 10 i }      ** reverse iterator for the array **
+
+** fill the elements of the array with values 0..9 **
+loop i
+{
+   let s run write s run j run j
+   let i dec i
+}
+print s   ** prints 0 1 2 3 4 5 6 7 8 9 **
+
+<font style="color: Brown">* A block as a subroutine:</font>
+
+let newSub
+{
+   <font style="color: Brown">**
+      Subroutine parameters are put to the <a href="#Queue">program queue</a> upon call.
+      Get calls should take place at the beginning of subroutine blocks (!)
+      (For safety and swift parsing reasons.)
+   **</font>
+   get p1
+   get p2
+   get p3
+   
+   run { add p1 add p2 p3 }
+   <font style="color: Brown">**
+      The return value of a subroutine is the result of its
+      last evaluation. (Works recursively (!))
+   **</font>
+}
+
+print run newSub 1 2 3   ** prints: 6 **
+
+<font style="color: Brown">** User subroutines must be called via run (!) **</font>
+</pre>
+
+<!----------------------------------------------------------------------------->
+
+<hr size="2" noshade color="gray"><br>
+
+<a name="Subroutines"></a>
+<b>Section 3 - Subroutine list</b>
+
+<p style="margin-left: 36pt">
+<a name="ReservedWords"></a>Built-in subroutine names are considered as <b>reserved words</b> along with block and comment delimiters ({, } and **). For unlisted but used variable names in mezzanine subroutines consult the interpreter source.<br>
+<br>
+Subroutines returning no value (~ procedures) pass on the { N0pe. } string.
+</p>
+
+<p style="margin-left: 36pt">
+<font style="background-color: #777777; color: White; font-weight: bold;">&nbsp;Core:&nbsp;</font>
+</p>
+<pre style="margin-left: 48pt">
+let arg1 arg2            * arg1 := arg2; (re)defines variable arg1; returns arg2
+
+<font style="color: Brown">var arg                  * returns the value of variable arg or the string
+                           { N0pe. } if arg is not yet defined;
+                           essential extensibility subroutine (!)</font>
+
+if arg1 arg2 arg3        * if arg1 is nonzero then evaluate agr2, else arg3
+                           (arg2 and arg3 should be blocks of code)
+                           (only the executed branch is verified)
+eq arg1 arg2             * returns 1 on arg1 == arg2, 0 otherwise
+gt arg1 arg2             * returns 1 on arg1 > arg2, 0 otherwise
+gteq arg1 arg2           * returns 1 on arg1 >= arg2, 0 otherwise
+and arg1 arg2            * returns 1 on arg1 && arg2, 0 otherwise
+or arg1 arg2             * returns 1 on arg1 || arg2, 0 otherwise
+not arg                  * returns 1 if arg == 0, 0 otherwise
+
+loop arg1 arg2           * loops arg2 while arg1 is nonzero;
+                           <font style="color: Brown">value checking for arg1 is continuous (!)
+
+<a name="Run"></a>run arg1 arg2 ... argn   * runs subroutine arg1 after placing its arguments
+                           (arg2 ... argn) to the <a href="#Queue">program queue</a>;
+                           should be used with <b>user subroutines</b> and
+                           <a href="#Mezzanine"><b>mezzanine functions</b></a> only (!)</font>
+
+exit                     * exits program
+error arg                * pops up an error dialog with message arg and
+                           exits program
+debug                    * switches debug operation
+
+ws                       * returns a whitespace string
+tab                      * returns a tabulator string
+
+Any nonzero value is considered as logical true, zero as false.
+(Strings are auto-converted.)
+eq, gt and gteq try to comprehend their parameters as numbers - 
+if it is not possible, alphabetic string comparison is being made.
+</pre>
+
+<p style="margin-left: 36pt">
+<font style="background-color: #777777; color: White; font-weight: bold;">&nbsp;Basic mathematics:&nbsp;</font>
+</p>
+<pre style="margin-left: 48pt">
+inc arg                  * returns arg+1
+dec arg
+add arg1 arg2
+sub arg1 arg2            * returns arg1-arg2
+mul arg1 arg2
+div arg1 arg2
+mod arg1 arg2
+pow arg1 arg2            * e.g.: pow 2 0.5 = &radic;2
+sin arg                  * trigonometric functions operate in <a href="#DegRad">Rad</a>
+cos arg
+tan arg
+asin arg
+acos arg
+atan arg
+ln arg                   * logaritmus naturalis
+e                        * watch out, do not use e as a variable name :-)
+pi
+abs arg
+ceil arg
+floor arg
+round arg
+rand arg1 arg2           * generates a random number in the range of [arg1, arg2)
+
+Mathematics subroutines operate with numeric values only
+(numbers and auto-converted strings) (!)
+</pre>
+
+<p style="margin-left: 36pt">
+<font style="background-color: #777777; color: White; font-weight: bold;">&nbsp;Stack and queue:&nbsp;</font>
+</p>
+<pre style="margin-left: 48pt">
+Considering stack positions the element with the highest address
+is the one located on the top.
+
+push arg                 * pushes arg to the top of the stack
+pop                      * pops top stack element
+lift arg                 * lifts arg-th stack element to top
+drop arg                 * drops top stack element to the arg-th position
+peek arg                 * gets arg-th stack element (does not pop!)
+poke arg1 arg2           * alters arg1-th stack element to arg2
+top                      * gives the address of top stack element;
+                           in case of empty stack top equals -1
+dump                     * dumps program stack; debugging subroutine
+
+<font style="color: Brown">tostack arg              * appends words of string arg to the stack
+tostring arg             * creates a string of current stack elements
+                           from stack position arg to top
+melt arg                 * "dissolves" string arg and appends its characters
+                           as separate words to the stack
+merge arg                * combines stack elements into one word from
+                           stack position arg to top
+
+<a name="Queue"></a>get arg                  * defines (!) variable arg by getting the next
+                           element from the program queue</font>
+
+tostring and merge auto-convert their arguments.
+Program queue should be used for subroutine calls only (!)
+let and get are the only definitive subroutines in webtongue (!)
+The size of program stack and queue is not limted in any way.
+</pre>
+
+<p style="margin-left: 36pt">
+<font style="background-color: #777777; color: White; font-weight: bold;">&nbsp;Miscellany and basic I/O:&nbsp;</font>
+</p>
+<pre style="margin-left: 48pt">
+date                     * returns system date and time in string format
+print arg                * prints arg to the Webtongue output string
+println arg
+input arg                * displays an input field with arg as its default value
+</pre>
+
+<p style="margin-left: 36pt">
+<a name="Mezzanine"></a><font style="background-color: #777777; color: White; font-weight: bold;">&nbsp;Mezzanine subroutines:&nbsp;</font>
+</p>
+<pre style="margin-left: 48pt">
+(The mezzanine concept is based on the same idea in <a href="http://www.rebol.com">Rebol</a>.)
+
+Mezzanine subroutines are written in pure Webtongue and are automatically
+included in your program upon start. Do not forget to call them using the
+<a href="#Run">run</a> command (!)
+
+nop                      * empty string; does nothing
+
+string arg1 arg2         * e.g.: <a href="#Arrays">string</a> { Hi } 3 creates { Hi Hi Hi }
+size arg                 * returns the word count of string arg
+read arg1 arg2           * reads the arg2-th word of string arg1
+write arg1 arg2 arg3     * writes arg3 to the arg2-th position of string arg1
+ins arg1 arg2 arg3       * inserts arg3 to the arg2-th position of string arg1
+del arg1 arg2            * deletes arg2-th element of string arg1
+
+sqrt arg                 * square root
+exp arg                  * e^x
+log arg                  * base 10 logarithm
+<a name="DegRad"></a>torad arg                * Deg -> Rad conversion
+todeg arg                * Rad -> Deg conversion
+
+dup                      * duplicates top stack element
+swp                      * swaps top two stack elements
+rot                      * rotates top three stack elements
+clr                      * clears the stack
+
+Some mezzanine functions do not keep a check on their parameters' validity.
+If you need a more robust implementation of them you can simply override
+their definitions.
+</pre>
+
+<p style="margin-left: 36pt">
+<font style="background-color: #777777; color: White; font-weight: bold;">&nbsp;Dynamic webdocuments:&nbsp;</font>
+</p>
+<pre style="margin-left: 48pt">
+This section will be included in next releases.
+</pre>
+
+<!----------------------------------------------------------------------------->
+
+<hr size="2" noshade color="gray"><br>
+
+<a name="Embedding"></a>
+<b>Section 4 - Embedding Webtongue</b>
+
+<p style="margin-left: 36pt">
+<font style="background-color: #777777; color: White; font-weight: bold;">&nbsp;JavaScript:&nbsp;</font>
+</p>
+<p style="margin-left: 48pt">
+Webtongue source strings may be easily evaluated via the outputstr = evalWebtongue(sourcestring) JavaScript call. This way Webtongue scripts can well cooperate with other embedded languages.
+</p>
+
+<!----------------------------------------------------------------------------->
+
+<center>[EOF]</center>
+
+</tt>
+</body>
