@@ -5,7 +5,7 @@ This language was design as my bachelor's thesis in 2004. It was the dusk of the
 
 The files checked into this repository are my original ones from back then, only URLs and my email address is actualized. It runs perfectly offline, just clone the repo or download the zip file and open index.html in your browser (I tried FF, Chrome and Safari). Docs and examples are included in the web pages.
 
-[Online interpreter](http://balazstth.github.com/webtongue-v1) can be used, too.
+[Online interpreter](http://balazstth.github.com/webtongue-v1) is available, too.
 
 I really think that this small language has great educational power so feel free to use it to that end (or any other).
 
