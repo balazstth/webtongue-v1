@@ -1,7 +1,7 @@
 Webtongue v1
 ===
 
-This language was design as my bachelor's thesis in 2004. It was the dusk of the _Web 1.0_ era, when people wanted to focus on advanced languages like Forth, Rebol, Lisp and the like but none of these were available to them universally, like in a web page's client side.
+This language was designed as my bachelor's thesis in 2004. It was the dusk of the _Web 1.0_ era, when people wanted to focus on advanced languages like Forth, Rebol, Lisp and the like but none of these were available to them universally, like in a web page's client side.
 
 The files checked into this repository are my original ones from back then, only URLs and my email address is actualized. It runs perfectly offline, just clone the repo or download the zip file and open index.html in your browser (I tried FF, Chrome and Safari). [Docs](http://balazstth.github.com/webtongue-v1/help.html) and [examples](http://balazstth.github.com/webtongue-v1/examples.html) are included in the web pages.
 
